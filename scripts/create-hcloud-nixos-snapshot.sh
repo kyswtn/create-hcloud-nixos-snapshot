@@ -1,5 +1,5 @@
-LONGOPTS="help,location:,server-type:,ssh-key:,host-name,save-config-to"
-OPTIONS="hl:t:s:Ho"
+LONGOPTS="help,location:,server-type:,ssh-key:,host-name:,save-config-to:"
+OPTIONS="hl:t:s:H:o:"
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") || exit 2
 eval set -- "$PARSED"
 SSH_KEYS_LIST=()
