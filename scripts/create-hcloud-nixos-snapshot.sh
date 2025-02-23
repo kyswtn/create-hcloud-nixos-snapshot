@@ -1,8 +1,9 @@
-LONGOPTS="help,location:,server-type:,ssh-key:,save-config-to"
-OPTIONS="hl:t:s:o"
+LONGOPTS="help,location:,server-type:,ssh-key:,host-name,save-config-to"
+OPTIONS="hl:t:s:Ho"
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") || exit 2
 eval set -- "$PARSED"
 SSH_KEYS_LIST=()
+HOST_NAME="nixos"
 SAVE_CONFIG_TO="$PWD"
 
 while true; do
@@ -26,6 +27,10 @@ while true; do
 		SSH_KEYS_LIST+=("$2")
 		shift 2
 		;;
+	-H | --host-name)
+		HOST_NAME="$2"
+		shift 2
+		;;
 	-o | --save-config-to)
 		SAVE_CONFIG_TO=$(realpath "$2")
 		shift 2
@@ -47,5 +52,6 @@ packer build \
 	-var="location=$LOCATION" \
 	-var="server_type=$SERVER_TYPE" \
 	-var="ssh_keys=$SSH_KEYS" \
+	-var="host_name=$HOST_NAME" \
 	-var="save_config_to=$SAVE_CONFIG_TO" \
 	"$PATH_ROOT"

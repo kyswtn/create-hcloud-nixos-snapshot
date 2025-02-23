@@ -33,6 +33,11 @@ variable "ssh_keys" {
   }
 }
 
+variable "host_name" {
+  type    = string
+  default = "nixos"
+}
+
 variable "snapshot_name" {
   type    = string
   default = "nixos-24.11"
@@ -48,7 +53,7 @@ source "hcloud" "nixos" {
   server_type     = var.server_type
   rescue          = "linux64"
   snapshot_name   = var.snapshot_name
-  snapshot_labels = {}
+  snapshot_labels = { name = var.snapshot_name }
   ssh_keys        = []
   ssh_username    = "root"
 }
@@ -81,7 +86,7 @@ build {
   provisioner "file" {
     content = templatefile(
       "${path.root}/configuration.nix.tpl",
-      { ssh_keys = var.ssh_keys }
+      { host_name = var.host_name, ssh_keys = var.ssh_keys }
     )
     destination = "/mnt/etc/nixos/configuration.nix"
     direction   = "upload"

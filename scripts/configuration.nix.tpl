@@ -4,13 +4,25 @@
     ./hardware-configuration.nix
   ];
 
-  # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos";
+  networking.hostName = "${host_name}";
   networking.networkmanager.enable = true;
   i18n.defaultLocale = "en_US.UTF-8";
+
+  nix = {
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+      keep-outputs = true;
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 1w";
+    };
+  };
 
   users.users.root = {
     extraGroups = [ ];
@@ -21,22 +33,16 @@
     ];
   };
 
-  environment.systemPackages = map lib.lowPrio [
-    pkgs.curl
-    pkgs.gitMinimal
-  ];
-
-  services.fail2ban.enable = true;
   services.openssh = {
     enable = true;
     settings = {
       PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
       PermitRootLogin = "prohibit-password";
     };
   };
-
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ ];
+  services.fail2ban.enable = true;
+  services.tailscale.enable = true;
 
   system.stateVersion = "24.11";
 }
