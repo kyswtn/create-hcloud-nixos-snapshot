@@ -16,6 +16,7 @@ rm -rf /var/log/*
 # Clean nix.
 rm -rf /tmp/*
 nix-collect-garbage -d
+nix-channel --update # Nix's broken without this.
 
 # Discard unused blocks.
 dd if=/dev/zero of=/zero bs=4M || true
